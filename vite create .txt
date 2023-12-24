@@ -1,0 +1,4 @@
+npm create vite folder -- --template react
+
+npm i
+
