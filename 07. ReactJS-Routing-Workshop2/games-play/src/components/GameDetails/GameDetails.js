@@ -1,18 +1,13 @@
-import { useEffect, useState, useContext } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
-import { gameServiceFactory } from '../../services/gameService';
-import { useService } from '../../hooks/useService';
-import { AuthContext } from '../../contexts/AuthContext';
+import * as gameService from '../../services/gameService';
 
 export const GameDetails = () => {
-    const { userId } = useContext(AuthContext);
     const [username, setUsername] = useState('');
     const [comment, setComment] = useState('');
     const { gameId } = useParams();
     const [game, setGame] = useState({});
-    const gameService = useService(gameServiceFactory)
-    const navigate = useNavigate();
 
     useEffect(() => {
         gameService.getOne(gameId)
@@ -29,19 +24,9 @@ export const GameDetails = () => {
             comment,
         });
 
-        setGame(state => ({ ...state, comments: { ...state.comments, [result._id]: result } }));
+        setGame(state => ({...state, comments: {...state.comments, [result._id]: result}}));
         setUsername('');
         setComment('');
-    };
-
-    const isOwner = game._ownerId === userId;
-
-    const onDeleteClick = async () => {
-        await gameService.delete(game._id);
-
-        // TODO: delete from state
-
-        navigate('/catalog');
     };
 
     return (
@@ -74,12 +59,10 @@ export const GameDetails = () => {
                 </div>
 
                 {/* <!-- Edit/Delete buttons ( Only for creator of this game )  --> */}
-                {isOwner && (
-                    <div className="buttons">
-                        <Link to={`/catalog/${game._id}/edit`} className="button">Edit</Link>
-                        <button className="button" onClick={onDeleteClick}>Delete</button>
-                    </div>
-                )}
+                <div className="buttons">
+                    <a href="#" className="button">Edit</a>
+                    <a href="#" className="button">Delete</a>
+                </div>
             </div>
 
             {/* <!-- Bonus --> */}
